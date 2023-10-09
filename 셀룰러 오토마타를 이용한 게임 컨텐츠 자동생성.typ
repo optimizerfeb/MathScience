@@ -14,7 +14,7 @@
 게임 속에는 맵, NPC, 퀘스트, 던전 등 다양한 컨텐츠가 존재한다. 이러한 컨텐츠들은 개발자가 직접 만들기도 하지만, 때로는 자동생성을 통해 만들기도 한다. 자동생성으로 만들어진 컨텐츠는 단조로운 패턴 등으로 비판받기도 하지만, 매 플레이시마다 다른 맵을 제공하는 게임에는 자동생성이 사실상 필수라고 할 수 있다.
 
 #figure(
-  image("Minecraft.png"),
+  image\("images/Minecraft.png"\),
   caption: [마인크래프트의 모든 맵은 자동생성을 통해 만들어진다.]
 )
 
@@ -73,7 +73,7 @@ $
 첫번째로, 셀룰러 오토마타를 이용해 랜덤 노이즈로부터 여러개의 섬이 존재하는 맵을 생성하는 방법이다.
 
 #figure(
-  image("Islands.svg"),
+  image("images/Islands.svg"),
   caption: [랜덤 노이즈로부터 섬 생성]
 )
 
@@ -87,14 +87,14 @@ WFC(Wave Function Collapse) 알고리즘은 비교적 최근인 2016년 발표�
 각 오토마타가 $0$ 과 $1$ 만을 상태로 갖는 위의 방법과 달리, WFC 알고리즘은 다양한 상태를 가질 수 있는 오토마타를 사용하며, 타일이 보다 일관적이도록 배치하기 때문에 다음과 같은 자연스러운 맵을 생성할 수 있다.
 
 #figure(
-  image("wavemap.png"),
+  image("images/wavemap.png"),
   caption: [WFC 알고리즘으로 생성한 맵]
 )
 
 WFC 알고리즘을 이용해 다음과 같은 전자 회로도 그릴 수 있다.
 
 #figure(
-  image("wavecircuit.png"),
+  image("images/wavecircuit.png"),
   caption: [WFC 알고리즘으로 그린 회로]
 )
 
