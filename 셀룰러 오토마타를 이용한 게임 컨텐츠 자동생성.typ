@@ -14,7 +14,7 @@
 게임 속에는 맵, NPC, 퀘스트, 던전 등 다양한 컨텐츠가 존재한다. 이러한 컨텐츠들은 개발자가 직접 만들기도 하지만, 때로는 자동생성을 통해 만들기도 한다. 자동생성으로 만들어진 컨텐츠는 단조로운 패턴 등으로 비판받기도 하지만, 매 플레이시마다 다른 맵을 제공하는 게임에는 자동생성이 사실상 필수라고 할 수 있다.
 
 #figure(
-  image\("images/Minecraft.png"\),
+  image("images/Minecraft.png"),
   caption: [마인크래프트의 모든 맵은 자동생성을 통해 만들어진다.]
 )
 
@@ -28,7 +28,7 @@ $ delta : Q times Sigma arrow.r Q $
 *셀룰러 오토마타* 는 주변의 다른 오토마타들의 상태를 입력으로 받는 오토마타이다. 셀룰러 오토마타의 대표적인 예시로, *콘웨이의 생명 게임* 이 있다.
 
 #figure(
-    image("Game of Life.svg", width: 90%),
+    image("images/Game of Life.svg", width: 90%),
     caption: [콘웨이의 생명 게임\ 각각의 격자가 셀룰러 오토마타이다.]
 )
 
@@ -95,7 +95,7 @@ WFC 알고리즘을 이용해 다음과 같은 전자 회로도 그릴 수 있�
 
 #figure(
   image("images/wavecircuit.png"),
-  caption: [WFC 알고리즘으로 그린 회로]
+  caption: [WFC 알고리즘을 이용해 그린 회로]
 )
 
 = 참고문헌
