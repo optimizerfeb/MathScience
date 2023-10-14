@@ -1,4 +1,4 @@
-#set text(font: "Noto Serif KR")
+#set text(font: "NanumMyeongjoOTF")
 
 #align(center, text(17pt)[
   *고속 역제곱근 알고리즘*
@@ -71,10 +71,12 @@ $
 반대로 $x$ 로부터 $a, b$ 를 계산하면
 $
   a &= floor(log_2 x) + 127\
-  b &= 2^(log_2 x - floor(log_2 x))
+  b &= 2^(23) [x times 2^(-floor(log_2 x)) - 1]
 $
-이다. 또한, $a, b$ 는 각각 $y$ 를 $2^(23)$ 으로 나눈 몫과 나머지이다. 따라서 $x$ 와 $y$ 를 서로에 대한 함수로 나타낼 수 있다. 
+이다. 또한 $a, b$ 는 각각 $y$ 를 $2^(23)$ 으로 나눈 몫과 나머지이다. 이제 $x, y$ 를 서로에 대한 함수로 나타내면
 $
-  x &= [1 + (y "mod" 2^(23)) times 2^(-23)] times 2^(y div 2^(23) - 127)\
-  y &= [floor(log_2 x) + 127] * 2^23 + 2^(log_2 x - floor(log_2 x))
+  x &= [1 + (y mod 2^(23)) times 2^(23)] times 2^(y div 2^(23) - 127)\
+  y &= 2^(23)[floor(log_2(x)) + x times 2^(- floor(log_2 x)) + 126]
 $
+
+= 3. 알고리즘 설명
