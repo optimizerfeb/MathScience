@@ -1,4 +1,4 @@
-#set text(font: "Noto Serif KR")
+#set text(font: "KoPubBatang_Pro")
 
 #align(center, text(17pt)[
   *고속 역제곱근 알고리즘*
