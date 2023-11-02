@@ -1,6 +1,7 @@
 #set text(font: "KoPubDotum_Pro")
+#set page(paper: "a4", margin: 5%)
 
-$x, y$ 는 Float32 타입의 수, $i, j$ 는 각각 $x, y$ 의 각 비트를 보존한 채 Int32 로 인식시킨 수라고 하자. $b in [0, 1]$ 일 때 $log_2 (1 + b)$ 를 $b + 0.043$ 으로 근사시킬 수 있으므로
+$x, y$ 는 $e^x = y$ 를 만족하는 Float32 타입의 수, $i, j$ 는 각각 $x, y$ 의 각 비트를 보존한 채 Int32 로 인식시킨 수라고 하자. $b in [0, 1]$ 일 때 $log_2 (1 + b)$ 를 $b + 0.0573$ 으로 근사시킬 수 있으므로
 
 $
     x &= ln y\
@@ -11,7 +12,7 @@ $
 이다. 우변을 정리하여
 
 $
-    2^(23) (x log_2 e + 127 - 0.043) = j
+    2^(23) (x log_2 e + 127 - 0.0573) = j
 $
 
 을 얻을 수 있다. 따라서,
@@ -39,14 +40,11 @@ $
 #align(center,
     block(fill: rgb("f0f0f0"), outset: 2%, radius: 5%, width: 80%,
     ```rust
+const mult32:f32 = 12102203.161561485;
+const adder32: f32 = 1064872507.1615615;
 
-const lne32: f32 = 1.44269504089;
-const mult32:f32 = 8388608.0;
-const adder32: f32 = 126.9427;
-
-const lne64: f64 = 1.44269504089;
-const mult64:f64 = 4503599627370496.0;
-const adder64: f64 = 1022.9427;
+const mult64:f64 = 6497320848556798.0;
+const adder64: f64 = 4606924340207518000.0;
 
 fn fast_exp32(x: f32) -> f32 {
 
@@ -57,8 +55,7 @@ fn fast_exp32(x: f32) -> f32 {
     
     unsafe {
         let mut u = U { f: x };
-        u.i = ((u.f * lne32 + adder32) * mult32) as i32;
-
+        u.i = (u.f * mult32 + adder32) as i32;
         u.f
     }
 
@@ -73,8 +70,7 @@ fn fast_exp64(x: f64) -> f64 {
     
     unsafe {
         let mut u = U { f: x };
-        u.i = ((u.f * lne64 + adder64) * mult64) as i64;
-
+        u.i = (u.f * mult64 + adder64) as i64;
         u.f
     }
 
