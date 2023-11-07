@@ -1,3 +1,5 @@
+// But not faster than the standard library's exp function, because that is one-line assembly.
+
 use std::f32::consts::E;
 
 const mult32:f32 = 12102203.161561485;

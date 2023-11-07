@@ -1,78 +1,96 @@
 use bencher::{Bencher, benchmark_group, benchmark_main};
-use core::f32::consts::E;
 
-const mult32:f32 = 12102203.161561485;
-const adder32:f32 = 1064872507.1615615;
-
-const mult64:f64 = 6497320848556798.0;
-const adder64:f64 = 4606924340207518000.0;
-
-union U32 {
-    f: f32,
-    i: i32,
+#[derive(Debug, Clone)]
+struct Matrix {
+    data: Vec<f64>,
+    width : usize,
+    height: usize
 }
 
-union U64 {
-    f: f64,
-    i: i64,
-}
+impl Matrix {
 
-fn trad_exp32(bench: &mut Bencher) {
-    let mut x: f32 = 1.0;
-    let mut y = 0.0;
-
-    bench.iter(|| {
-        for _ in 0..1000000 {
-            y += x.exp();
+    // Not initialized
+    fn new(width: usize, height: usize) -> Self {
+        Self {
+            data: vec![0.0; width * height],
+            width,
+            height
         }
+    }
 
-        x += 0.00005;
-    });
-}
+    fn naive_mul(lhs: Self, rhs: Self) -> Self {
+        assert_eq!(lhs.width, rhs.height);
 
-fn fast_exp32(bench: &mut Bencher) {
-    let mut x: f32 = 1.0;
-    let mut y = 0.0;
-
-    bench.iter(|| {
-        for _ in 0..1000000 {
-            unsafe {
-                let mut u = U32 { i: ( x * mult32 + adder32 ) as i32};
+        let mut result = Self::new(lhs.height, rhs.width);
+        for i in 0..lhs.height {
+            for j in 0..rhs.width {
+                let mut sum = 0.0;
+                for k in 0..lhs.width {
+                    sum += lhs.data[i * lhs.width + k] * rhs.data[k * rhs.width + j];
+                }
+                result.data[i * rhs.width + j] = sum;
             }
-
-            x += 0.00005;
         }
-    });
-}
+        result
+    }
 
-fn trad_exp64(bench: &mut Bencher) {
-    let mut x: f64 = 1.0;
-    let mut y = 0.0;
-
-    bench.iter(|| {
-        for _ in 0..1000000 {
-            y += x.exp();
-        }
-
-        x += 0.0001;
-    });
-}
-
-fn fast_exp64(bench: &mut Bencher) {
-    let mut x: f64 = 1.0;
-    let mut y = 0.0;
-
-    bench.iter(|| {
-        for _ in 0..1000000 {
-            unsafe {
-                let mut u = U64 { i: (x * mult64 + adder64) as i64};
+    fn fast_mul(lhs: Self, rhs: Self) -> Self {
+        let mut result = Self::new(lhs.height, rhs.width);
+        for k in 0..lhs.height {
+            for i in 0..rhs.height {
+                for j in 0..rhs.width {
+                    result.data[lhs.width * k + j] += lhs.data[lhs.width * k + i] * rhs.data[lhs.width * i + j];
+                }
             }
-
-            x += 0.0001;
         }
-    });
+        result
+    }
 }
 
-benchmark_group!(benches, trad_exp32, fast_exp32, trad_exp64, fast_exp64);
+fn naivemul(b: &mut Bencher) {
+    let lhs = Matrix{
+        data : vec![2.0; 4096],
+        width: 64,
+        height: 64
+    };
+    let rhs = Matrix{
+        data : vec![0.5; 4096],
+        width: 64,
+        height: 64
+    };
+
+    b.iter(|| {
+        for _ in 0..100 {
+            let (lhs, rhs) = (lhs.clone(), rhs.clone());
+
+            Matrix::naive_mul(lhs, rhs);
+        }
+    })
+}
+
+fn fastmul(b: &mut Bencher) {
+    let lhs = Matrix{
+        data : vec![2.0; 4096],
+        width: 64,
+        height: 64
+    };
+    let rhs = Matrix{
+        data : vec![0.5; 4096],
+        width: 64,
+        height: 64
+    };
+
+    b.iter(|| {
+        for _ in 0..100 {
+            let (lhs, rhs) = (lhs.clone(), rhs.clone());
+
+            Matrix::fast_mul(lhs, rhs);
+        }
+    })
+}
+
+fn donotwarn(b: &mut Bencher) {}
+
+benchmark_group!(benches, naivemul, fastmul);
 benchmark_main!(benches);
 
