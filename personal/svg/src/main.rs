@@ -10,7 +10,16 @@ fn main() {
     march.fill(11, 0);
     march.fill(24, 8);
     march.fill(24, 11);
+    march.fill(31, 18);
+    march.fill(31, 19);
+    march.fill(31, 20);
+    march.fill(31, 21);
+    march.fill(31, 22);
     march.fill(31, 23);
+    march.fill(30, 23);
+    march.fill(29, 23);
+    march.fill(28, 23);
+    march.fill(27, 23);
     march.fill(30, 22);
     march.fill(16, 12);
     march.fill(8, 22);
@@ -121,10 +130,10 @@ impl March {
     }
 
     fn render(&self) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
-        let mut image = ImageBuffer::new((self.width * 16) as u32, (self.height * 16) as u32);
+        let mut image = ImageBuffer::new((self.width * 32) as u32, (self.height * 32) as u32);
         
         for (x, y, pixel) in image.enumerate_pixels_mut() {
-            let (gx, gy) = ((x / 16) as usize, (y / 16) as usize);
+            let (gx, gy) = ((x / 32) as usize, (y / 32) as usize);
 
             if self.map[gx + gy * self.width] {
                 *pixel = Rgba([0, 0, 0, 255]);
@@ -135,19 +144,19 @@ impl March {
             let (fx, fy) = (x as f32, y as f32);
             let (a, b) = self.direction;
 
-            if (a * (fx - 32.0) - b * (fy - 32.0)).abs() < 1.0 {
+            if (b * (fx - 128.0) - a * (fy - 128.0)).abs() < 1.0 {
                 *pixel = Rgba([0, 0, 255, 255]);
             }
 
             for (index, (px, py)) in self.trace.iter().enumerate() {
-                let (px, py) = (px * 16.0, py * 16.0);
+                let (px, py) = (px * 32.0, py * 32.0);
                 let dist = self.sdf(self.trace[index]);
 
-                let pixdist = ((fx - px).powi(2) + (fy - py).powi(2)).sqrt() / 16.0;
+                let pixdist = ((fx - px).powi(2) + (fy - py).powi(2)).sqrt() / 32.0;
 
-                if pixdist < 3.0 / 16.0 {
+                if pixdist < 4.5 / 32.0 {
                     *pixel = Rgba([255, 0, 0, 255]);
-                } else if (pixdist - dist).abs() < 1.0 / 16.0 {
+                } else if (pixdist - dist).abs() < 1.5 / 32.0 {
                     *pixel = Rgba([0, 255, 0, 255]);
                 }
             }

@@ -149,7 +149,7 @@ $
     caption: [$[0, 1]$ 범위에서 $log_2 (b + 1)$ 과 $b + 0.043$ 의 그래프]
   )
 
-  위 그래프에서 보이듯, $[0, 1]$ 범위에서 $log_2(b + 1)$ 은 $b + 0.043$ 와 매우 가까운 값을 가지므로 $b + 0.043$ 으로 근사할 수 있다. 따라서
+  위 그래프에서 보이듯, $b in [0, 1]$ 일 때 $log_2(b + 1)$ 은 $b + 0.043$ 와 매우 가까운 값을 가지므로 $b + 0.043$ 으로 근사할 수 있다. 따라서
 
   $
     log_2(y) &tilde.eq 2^(-23)b + a - 127 + 0.043\
@@ -247,30 +247,52 @@ $
     radius: 5%,
     outset: 5%,
 ```rust
-union IntFloat {
-  f: f32,
-  i: i32
-}
+const mult32:f32 = 12102203.161561485;
+const adder32: f32 = 1064872507.1615615;
 
-fn fast_inverse_root(number: f64) -> f64
-{
-  let x = number;
-  let mut y = IntFloat { f: number };
-
-  unsafe{
-    y.i = 0x5f3759df - ( y.i >> 1 );
-    y.f = y.f * ( 1.5_f32 - x * y.f.powi(2) );
-
-    y.f
-  }
+fn fast_exp32(x: f32) -> f32 {
+    union U {
+        f: f32,
+        i: i32,
+    }
+    
+    unsafe {
+        let mut u = U { f: x };
+        u.i = (u.f * mult32 + adder32) as i32;
+        u.f
+    }
 }
 ```
   )
 ,
-  caption: [\ Rust 로 구현한 고속 역제곱근 알고리즘],
+  caption: [\ 같은 방법으로 설계한, 지수함수를 빠르게 계산하는 알고리즘],
   supplement: none
 )
-r
+
+위 코드에 대해 설명하면,
+
+$x, y$ 는 $e^x = y$ 를 만족하는 Float32 타입의 수, $i, j$ 는 각각 $x, y$ 의 각 비트를 보존한 채 Int32 로 인식시킨 수라고 하자. $b in [0, 1]$ 일 때 $log_2 (1 + b)$ 를 $b + 0.0573$ 으로 근사시킬 수 있으므로
+
+$
+    x &= ln y\
+    &= (log_2 y) / (log_2 e)\
+    &tilde.eq 1 / (log_2 e) [2^(-23)j - 127 + 0.0573]\
+$
+
+이다. 우변을 정리하여
+
+$
+    2^(23) (x log_2 e + 127 - 0.0573) = j
+$
+
+을 얻을 수 있다. 따라서,
+
+$
+    y tilde.eq "* ( Float32 * ) " (2^(23) (x log_2 e + 127 - 0.0573) "as Int32")
+$
+
+이 된다. 따라서 위와 같은 코드로 지수함수를 계산할 수 있다. 역제곱근과 마찬가지로 현대의 CPU 는 지수함수를 하나의 어셈블리 명령어로 계산하므로 의미 있는 알고리즘은 아니다.
+
 = 참고문헌
 
 Lomont, C. (2003). Fast inverse square root. Tech-315 nical Report, 32.\
